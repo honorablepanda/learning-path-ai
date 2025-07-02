@@ -5,8 +5,8 @@ import ProgressTracker from "./components/ProgressTracker";
 
 export default function LearningPathCoach() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">📚 Learning Path AI / Upskilling Coach</h1>
+    <div style={{ maxWidth: 700, margin: "auto", padding: 20, fontFamily: "Arial, sans-serif" }}>
+      <h1>📚 Learning Path AI / Upskilling Coach</h1>
       <SkillGapAnalyzer />
       <LearningPathSuggestions />
       <ProgressTracker />
