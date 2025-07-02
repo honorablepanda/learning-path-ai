@@ -1,4 +1,3 @@
-cat > package.json << 'EOF'
 {
   "name": "learning-path-ai",
   "version": "1.0.0",
@@ -18,4 +17,3 @@ cat > package.json << 'EOF'
     "vite": "^7.0.0"
   }
 }
-EOF
