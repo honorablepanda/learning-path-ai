@@ -1,0 +1,719 @@
+File name: backupProjectCode.js
+
+Code:
+// backupProjectCode.js
+const fs = require("fs");
+const path = require("path");
+
+const OUTPUT_FOLDER = "code-backups";
+const MAX_CHARACTERS_PER_FILE = 500000; // ~500KB target size per file
+
+const ALLOWED_EXTENSIONS = [".js", ".jsx", ".json", ".html", ".css", ".ts", ".tsx", ".txt", ".md"];
+
+let bundles = [];
+let currentBundle = "";
+let bundleIndex = 1;
+
+function collectFiles(dir) {
+  const items = fs.readdirSync(dir, { withFileTypes: true });
+
+  items.forEach((item) => {
+    const fullPath = path.join(dir, item.name);
+
+    if (item.isDirectory()) {
+      collectFiles(fullPath);
+    } else {
+      const ext = path.extname(item.name).toLowerCase();
+      if (ALLOWED_EXTENSIONS.includes(ext)) {
+        const code = fs.readFileSync(fullPath, "utf8");
+
+        const entry = `File name: ${path.relative(".", fullPath)}\n\nCode:\n${code}\n\n---\n\n`;
+
+        if (currentBundle.length + entry.length > MAX_CHARACTERS_PER_FILE) {
+          bundles.push(currentBundle);
+          currentBundle = "";
+        }
+
+        currentBundle += entry;
+      }
+    }
+  });
+}
+
+function writeBundles() {
+  if (currentBundle) bundles.push(currentBundle);
+  fs.mkdirSync(OUTPUT_FOLDER, { recursive: true });
+
+  bundles.forEach((content, i) => {
+    const filePath = path.join(OUTPUT_FOLDER, `code-bundle-${i + 1}.txt`);
+    fs.writeFileSync(filePath, content, "utf8");
+    console.log(`✅ Saved ${filePath}`);
+  });
+}
+
+console.log("📦 Backing up project code files...");
+collectFiles(".");
+writeBundles();
+console.log("✅ Done. Code backups saved in:", OUTPUT_FOLDER);
+
+
+---
+
+File name: backupProjectStructure.js
+
+Code:
+// backupProjectStructure.js
+const fs = require("fs");
+const path = require("path");
+
+const OUTPUT_FOLDER = "structure-backups";
+const MAX_LINES_PER_FILE = 4000; // Adjust if needed for ChatGPT
+
+const outputLines = [];
+
+function walk(dir, prefix = "") {
+  const items = fs.readdirSync(dir, { withFileTypes: true });
+  items.forEach((item, idx) => {
+    const isLast = idx === items.length - 1;
+    const connector = isLast ? "└── " : "├── ";
+    outputLines.push(`${prefix}${connector}${item.name}`);
+
+    if (item.isDirectory()) {
+      walk(path.join(dir, item.name), prefix + (isLast ? "    " : "│   "));
+    }
+  });
+}
+
+function writeChunks() {
+  fs.mkdirSync(OUTPUT_FOLDER, { recursive: true });
+
+  let part = 1;
+  for (let i = 0; i < outputLines.length; i += MAX_LINES_PER_FILE) {
+    const chunk = outputLines.slice(i, i + MAX_LINES_PER_FILE).join("\n");
+    const filePath = path.join(OUTPUT_FOLDER, `project-structure-part${part}.txt`);
+    fs.writeFileSync(filePath, chunk, "utf8");
+    console.log(`✅ Saved ${filePath}`);
+    part++;
+  }
+}
+
+console.log("📂 Backing up project folder structure...");
+walk(".");
+writeChunks();
+console.log("✅ Done. Structure backups saved in:", OUTPUT_FOLDER);
+
+
+---
+
+File name: code-backups\code-bundle-1.txt
+
+Code:
+File name: backupProjectCode.js
+
+Code:
+// backupProjectCode.js
+const fs = require("fs");
+const path = require("path");
+
+const OUTPUT_FOLDER = "code-backups";
+const MAX_CHARACTERS_PER_FILE = 500000; // ~500KB target size per file
+
+const ALLOWED_EXTENSIONS = [".js", ".jsx", ".json", ".html", ".css", ".ts", ".tsx", ".txt", ".md"];
+
+let bundles = [];
+let currentBundle = "";
+let bundleIndex = 1;
+
+function collectFiles(dir) {
+  const items = fs.readdirSync(dir, { withFileTypes: true });
+
+  items.forEach((item) => {
+    const fullPath = path.join(dir, item.name);
+
+    if (item.isDirectory()) {
+      collectFiles(fullPath);
+    } else {
+      const ext = path.extname(item.name).toLowerCase();
+      if (ALLOWED_EXTENSIONS.includes(ext)) {
+        const code = fs.readFileSync(fullPath, "utf8");
+
+        const entry = `File name: ${path.relative(".", fullPath)}\n\nCode:\n${code}\n\n---\n\n`;
+
+        if (currentBundle.length + entry.length > MAX_CHARACTERS_PER_FILE) {
+          bundles.push(currentBundle);
+          currentBundle = "";
+        }
+
+        currentBundle += entry;
+      }
+    }
+  });
+}
+
+function writeBundles() {
+  if (currentBundle) bundles.push(currentBundle);
+  fs.mkdirSync(OUTPUT_FOLDER, { recursive: true });
+
+  bundles.forEach((content, i) => {
+    const filePath = path.join(OUTPUT_FOLDER, `code-bundle-${i + 1}.txt`);
+    fs.writeFileSync(filePath, content, "utf8");
+    console.log(`✅ Saved ${filePath}`);
+  });
+}
+
+console.log("📦 Backing up project code files...");
+collectFiles(".");
+writeBundles();
+console.log("✅ Done. Code backups saved in:", OUTPUT_FOLDER);
+
+
+---
+
+File name: backupProjectStructure.js
+
+Code:
+// backupProjectStructure.js
+const fs = require("fs");
+const path = require("path");
+
+const OUTPUT_FOLDER = "structure-backups";
+const MAX_LINES_PER_FILE = 4000; // Adjust if needed for ChatGPT
+
+const outputLines = [];
+
+function walk(dir, prefix = "") {
+  const items = fs.readdirSync(dir, { withFileTypes: true });
+  items.forEach((item, idx) => {
+    const isLast = idx === items.length - 1;
+    const connector = isLast ? "└── " : "├── ";
+    outputLines.push(`${prefix}${connector}${item.name}`);
+
+    if (item.isDirectory()) {
+      walk(path.join(dir, item.name), prefix + (isLast ? "    " : "│   "));
+    }
+  });
+}
+
+function writeChunks() {
+  fs.mkdirSync(OUTPUT_FOLDER, { recursive: true });
+
+  let part = 1;
+  for (let i = 0; i < outputLines.length; i += MAX_LINES_PER_FILE) {
+    const chunk = outputLines.slice(i, i + MAX_LINES_PER_FILE).join("\n");
+    const filePath = path.join(OUTPUT_FOLDER, `project-structure-part${part}.txt`);
+    fs.writeFileSync(filePath, chunk, "utf8");
+    console.log(`✅ Saved ${filePath}`);
+    part++;
+  }
+}
+
+console.log("📂 Backing up project folder structure...");
+walk(".");
+writeChunks();
+console.log("✅ Done. Structure backups saved in:", OUTPUT_FOLDER);
+
+
+---
+
+File name: Commands to run backup scripts.txt
+
+Code:
+node backupProjectStructure.js
+node backupProjectCode.js
+
+
+---
+
+File name: components\LearningPathSuggestions.jsx
+
+Code:
+import React, { useState } from "react";
+import { useLearningPathCoach } from "../hooks/useLearningPathCoach";
+
+export default function LearningPathSuggestions() {
+  const { suggestPaths, loading, error } = useLearningPathCoach();
+  const [paths, setPaths] = useState([]);
+  const [triggered, setTriggered] = useState(false);
+
+  const generateSuggestions = async () => {
+    const suggestions = await suggestPaths();
+    setPaths(suggestions);
+    setTriggered(true);
+  };
+
+  return (
+    <div className="mb-6 p-4 bg-blue-50 rounded border">
+      <h2 className="font-semibold mb-2">AI Learning Path Suggestions</h2>
+      <button
+        onClick={generateSuggestions}
+        disabled={loading}
+        className="bg-blue-700 text-white px-3 py-1 rounded"
+      >
+        {loading ? "Generating..." : "Generate Suggestions"}
+      </button>
+      {error && <div className="text-red-600 mt-2">{error}</div>}
+      {triggered && !loading && (
+        <ul className="list-disc list-inside mt-3 text-sm">
+          {paths.map((p, i) => (
+            <li key={i}>{p}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+
+---
+
+File name: components\ProgressTracker.jsx
+
+Code:
+import React, { useState } from "react";
+import { mockUserProgress } from "../mock/mockUserSkills";
+
+export default function ProgressTracker() {
+  const [progress, setProgress] = useState(mockUserProgress);
+
+  const toggleCompleted = (skill) => {
+    setProgress((prev) =>
+      prev.map((item) =>
+        item.skill === skill ? { ...item, completed: !item.completed } : item
+      )
+    );
+  };
+
+  return (
+    <div className="mb-6 p-4 bg-green-50 rounded border">
+      <h2 className="font-semibold mb-2">Skill Progress Tracker</h2>
+      <ul className="list-disc list-inside text-sm max-h-48 overflow-auto">
+        {progress.map(({ skill, completed }) => (
+          <li key={skill} className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={completed}
+              onChange={() => toggleCompleted(skill)}
+            />
+            <span className={completed ? "line-through text-gray-500" : ""}>
+              {skill}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+
+---
+
+File name: components\SkillGapAnalyzer.jsx
+
+Code:
+import React, { useState } from "react";
+
+export default function SkillGapAnalyzer() {
+  const [resumeText, setResumeText] = useState("");
+  const [jobDesc, setJobDesc] = useState("");
+  const [analysis, setAnalysis] = useState(null);
+
+  const analyzeGap = () => {
+    // Dummy logic to find missing skills
+    const resumeSkills = resumeText.toLowerCase().split(/\W+/);
+    const jobSkills = jobDesc.toLowerCase().split(/\W+/);
+    const missing = jobSkills.filter((skill) => skill && !resumeSkills.includes(skill));
+    setAnalysis(missing.length > 0 ? missing : ["No missing skills detected!"]);
+  };
+
+  return (
+    <div className="mb-6 p-4 bg-gray-50 rounded border">
+      <h2 className="font-semibold mb-2">Skill Gap Analyzer</h2>
+      <textarea
+        rows={4}
+        placeholder="Paste your resume text here"
+        className="w-full border p-2 rounded mb-2"
+        value={resumeText}
+        onChange={(e) => setResumeText(e.target.value)}
+      />
+      <textarea
+        rows={4}
+        placeholder="Paste job description here"
+        className="w-full border p-2 rounded mb-2"
+        value={jobDesc}
+        onChange={(e) => setJobDesc(e.target.value)}
+      />
+      <button
+        onClick={analyzeGap}
+        className="bg-blue-700 text-white px-3 py-1 rounded"
+        disabled={!resumeText || !jobDesc}
+      >
+        Analyze Skill Gap
+      </button>
+      {analysis && (
+        <div className="mt-3 p-2 bg-white border rounded text-sm">
+          <b>Missing Skills:</b>
+          <ul className="list-disc list-inside">
+            {analysis.map((skill, i) => (
+              <li key={i}>{skill}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+---
+
+File name: hooks\useLearningPathCoach.js
+
+Code:
+import { useState } from "react";
+
+export const useLearningPathCoach = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const suggestPaths = async () => {
+    setLoading(true);
+    setError(null);
+    // Dummy AI call simulation
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        setLoading(false);
+        resolve([
+          "Complete the Advanced React course on Coursera",
+          "Learn TypeScript fundamentals",
+          "Build 3 projects with REST APIs",
+          "Practice algorithms on LeetCode",
+        ]);
+      }, 1500);
+    });
+  };
+
+  return { loading, error, suggestPaths };
+};
+
+
+---
+
+File name: index.jsx
+
+Code:
+import React from "react";
+import SkillGapAnalyzer from "./components/SkillGapAnalyzer";
+import LearningPathSuggestions from "./components/LearningPathSuggestions";
+import ProgressTracker from "./components/ProgressTracker";
+
+export default function LearningPathCoach() {
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">📚 Learning Path AI / Upskilling Coach</h1>
+      <SkillGapAnalyzer />
+      <LearningPathSuggestions />
+      <ProgressTracker />
+    </div>
+  );
+}
+
+
+---
+
+File name: mock\mockUserSkills.js
+
+Code:
+export const mockUserSkills = [
+  "JavaScript",
+  "React",
+  "HTML/CSS",
+  "Git",
+  "Node.js",
+  "SQL",
+];
+
+export const mockUserProgress = [
+  { skill: "JavaScript", completed: true },
+  { skill: "React", completed: false },
+  { skill: "HTML/CSS", completed: true },
+  { skill: "Git", completed: true },
+  { skill: "Node.js", completed: false },
+  { skill: "SQL", completed: false },
+];
+
+
+---
+
+File name: structure-backups\project-structure-part1.txt
+
+Code:
+├── backupProjectCode.js
+├── backupProjectStructure.js
+├── Commands to run backup scripts.txt
+├── components
+│   ├── LearningPathSuggestions.jsx
+│   ├── ProgressTracker.jsx
+│   └── SkillGapAnalyzer.jsx
+├── hooks
+│   └── useLearningPathCoach.js
+├── index.jsx
+└── mock
+    └── mockUserSkills.js
+
+---
+
+
+
+---
+
+File name: Commands to run backup scripts.txt
+
+Code:
+node backupProjectStructure.js
+node backupProjectCode.js
+
+
+---
+
+File name: components\LearningPathSuggestions.jsx
+
+Code:
+import React, { useState } from "react";
+import { useLearningPathCoach } from "../hooks/useLearningPathCoach";
+
+export default function LearningPathSuggestions() {
+  const { suggestPaths, loading, error } = useLearningPathCoach();
+  const [paths, setPaths] = useState([]);
+  const [triggered, setTriggered] = useState(false);
+
+  const generateSuggestions = async () => {
+    const suggestions = await suggestPaths();
+    setPaths(suggestions);
+    setTriggered(true);
+  };
+
+  return (
+    <div className="mb-6 p-4 bg-blue-50 rounded border">
+      <h2 className="font-semibold mb-2">AI Learning Path Suggestions</h2>
+      <button
+        onClick={generateSuggestions}
+        disabled={loading}
+        className="bg-blue-700 text-white px-3 py-1 rounded"
+      >
+        {loading ? "Generating..." : "Generate Suggestions"}
+      </button>
+      {error && <div className="text-red-600 mt-2">{error}</div>}
+      {triggered && !loading && (
+        <ul className="list-disc list-inside mt-3 text-sm">
+          {paths.map((p, i) => (
+            <li key={i}>{p}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+
+---
+
+File name: components\ProgressTracker.jsx
+
+Code:
+import React, { useState } from "react";
+import { mockUserProgress } from "../mock/mockUserSkills";
+
+export default function ProgressTracker() {
+  const [progress, setProgress] = useState(mockUserProgress);
+
+  const toggleCompleted = (skill) => {
+    setProgress((prev) =>
+      prev.map((item) =>
+        item.skill === skill ? { ...item, completed: !item.completed } : item
+      )
+    );
+  };
+
+  return (
+    <div className="mb-6 p-4 bg-green-50 rounded border">
+      <h2 className="font-semibold mb-2">Skill Progress Tracker</h2>
+      <ul className="list-disc list-inside text-sm max-h-48 overflow-auto">
+        {progress.map(({ skill, completed }) => (
+          <li key={skill} className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={completed}
+              onChange={() => toggleCompleted(skill)}
+            />
+            <span className={completed ? "line-through text-gray-500" : ""}>
+              {skill}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+
+---
+
+File name: components\SkillGapAnalyzer.jsx
+
+Code:
+import React, { useState } from "react";
+
+export default function SkillGapAnalyzer() {
+  const [resumeText, setResumeText] = useState("");
+  const [jobDesc, setJobDesc] = useState("");
+  const [analysis, setAnalysis] = useState(null);
+
+  const analyzeGap = () => {
+    // Dummy logic to find missing skills
+    const resumeSkills = resumeText.toLowerCase().split(/\W+/);
+    const jobSkills = jobDesc.toLowerCase().split(/\W+/);
+    const missing = jobSkills.filter((skill) => skill && !resumeSkills.includes(skill));
+    setAnalysis(missing.length > 0 ? missing : ["No missing skills detected!"]);
+  };
+
+  return (
+    <div className="mb-6 p-4 bg-gray-50 rounded border">
+      <h2 className="font-semibold mb-2">Skill Gap Analyzer</h2>
+      <textarea
+        rows={4}
+        placeholder="Paste your resume text here"
+        className="w-full border p-2 rounded mb-2"
+        value={resumeText}
+        onChange={(e) => setResumeText(e.target.value)}
+      />
+      <textarea
+        rows={4}
+        placeholder="Paste job description here"
+        className="w-full border p-2 rounded mb-2"
+        value={jobDesc}
+        onChange={(e) => setJobDesc(e.target.value)}
+      />
+      <button
+        onClick={analyzeGap}
+        className="bg-blue-700 text-white px-3 py-1 rounded"
+        disabled={!resumeText || !jobDesc}
+      >
+        Analyze Skill Gap
+      </button>
+      {analysis && (
+        <div className="mt-3 p-2 bg-white border rounded text-sm">
+          <b>Missing Skills:</b>
+          <ul className="list-disc list-inside">
+            {analysis.map((skill, i) => (
+              <li key={i}>{skill}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+---
+
+File name: hooks\useLearningPathCoach.js
+
+Code:
+import { useState } from "react";
+
+export const useLearningPathCoach = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const suggestPaths = async () => {
+    setLoading(true);
+    setError(null);
+    // Dummy AI call simulation
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        setLoading(false);
+        resolve([
+          "Complete the Advanced React course on Coursera",
+          "Learn TypeScript fundamentals",
+          "Build 3 projects with REST APIs",
+          "Practice algorithms on LeetCode",
+        ]);
+      }, 1500);
+    });
+  };
+
+  return { loading, error, suggestPaths };
+};
+
+
+---
+
+File name: index.jsx
+
+Code:
+import React from "react";
+import SkillGapAnalyzer from "./components/SkillGapAnalyzer";
+import LearningPathSuggestions from "./components/LearningPathSuggestions";
+import ProgressTracker from "./components/ProgressTracker";
+
+export default function LearningPathCoach() {
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">📚 Learning Path AI / Upskilling Coach</h1>
+      <SkillGapAnalyzer />
+      <LearningPathSuggestions />
+      <ProgressTracker />
+    </div>
+  );
+}
+
+
+---
+
+File name: mock\mockUserSkills.js
+
+Code:
+export const mockUserSkills = [
+  "JavaScript",
+  "React",
+  "HTML/CSS",
+  "Git",
+  "Node.js",
+  "SQL",
+];
+
+export const mockUserProgress = [
+  { skill: "JavaScript", completed: true },
+  { skill: "React", completed: false },
+  { skill: "HTML/CSS", completed: true },
+  { skill: "Git", completed: true },
+  { skill: "Node.js", completed: false },
+  { skill: "SQL", completed: false },
+];
+
+
+---
+
+File name: structure-backups\project-structure-part1.txt
+
+Code:
+├── backupProjectCode.js
+├── backupProjectStructure.js
+├── code-backups
+│   └── code-bundle-1.txt
+├── Commands to run backup scripts.txt
+├── components
+│   ├── LearningPathSuggestions.jsx
+│   ├── ProgressTracker.jsx
+│   └── SkillGapAnalyzer.jsx
+├── hooks
+│   └── useLearningPathCoach.js
+├── index.jsx
+├── mock
+│   └── mockUserSkills.js
+└── structure-backups
+    └── project-structure-part1.txt
+
+---
+

@@ -1,0 +1,16 @@
+├── backupProjectCode.js
+├── backupProjectStructure.js
+├── code-backups
+│   └── code-bundle-1.txt
+├── Commands to run backup scripts.txt
+├── components
+│   ├── LearningPathSuggestions.jsx
+│   ├── ProgressTracker.jsx
+│   └── SkillGapAnalyzer.jsx
+├── hooks
+│   └── useLearningPathCoach.js
+├── index.jsx
+├── mock
+│   └── mockUserSkills.js
+└── structure-backups
+    └── project-structure-part1.txt
